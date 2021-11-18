@@ -38,18 +38,20 @@ export class CursosFormComponent implements OnInit {
 
       }
    ); */
-
+/*
     this.route.params
       .pipe(
         map((params: any) => params['id']),
         switchMap((id) => this.service.loadById(id))
       )
-      .subscribe((curso) => this.updadeForm(curso));
+      .subscribe((curso) => this.updadeForm(curso)); */
+
+    const curso = this.route.snapshot.data['curso'];
 
     this.form = this.fb.group({
-      id: [null],
+      id: [curso.id],
       nome: [
-        null,
+        curso.nome,
         [
           Validators.required,
           Validators.minLength(3),
@@ -59,12 +61,12 @@ export class CursosFormComponent implements OnInit {
     });
   }
 
-  updadeForm(curso: any) {
+/*   updadeForm(curso: any) {
     this.form.patchValue({
       id: curso.id,
       nome: curso.nome,
     });
-  }
+  } */
 
   hasErrors(field: string) {
     return this.form?.get(field)?.errors;
@@ -75,15 +77,43 @@ export class CursosFormComponent implements OnInit {
     console.log(this.form.value);
     if (this.form?.valid) {
       console.log('submit');
-      this.service.create(this.form.value).subscribe(
+      let msgSuccess = 'Curso criado com sucesso';
+      let msgErro = 'Erro ao criar o curso Tente Novamente';
+      if (this.form.value.id) {
+        msgSuccess = 'Curso Atualizado com sucesso';
+        msgErro = 'Erro ao atualizar o curso Tente Novamente';
+      }
+
+      this.service.save(this.form.value).subscribe(
         (success) => {
-          this.modal.showAlertSuccess('Curso criado com sucesso');
+          this.modal.showAlertSuccess(msgSuccess);
           this.location.back();
         },
         (error) =>
-          this.modal.showAlertDanger('Erro ao criar o curso Tente Novamente'),
-        () => console.log('request completo')
+          this.modal.showAlertDanger(msgErro),
+        () => console.log('update completo')
       );
+/*       if (this.form.value.id) {
+        this.service.update(this.form.value).subscribe(
+          (success) => {
+            this.modal.showAlertSuccess('Curso Atualizado com sucesso');
+            this.location.back();
+          },
+          (error) =>
+            this.modal.showAlertDanger('Erro ao Atualizar o curso Tente Novamente'),
+          () => console.log('update completo')
+        );
+      }else{
+        this.service.create(this.form.value).subscribe(
+          (success) => {
+            this.modal.showAlertSuccess('Curso criado com sucesso');
+            this.location.back();
+          },
+          (error) =>
+            this.modal.showAlertDanger('Erro ao criar o curso Tente Novamente'),
+          () => console.log('request completo')
+        );
+      } */
     }
   }
 

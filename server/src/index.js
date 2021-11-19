@@ -25,3 +25,11 @@ app.use((err, req, res, next) => res.json({ error: err.message }));
 app.listen(8000, () => {
   console.log("Servidor porta 8000");
 });
+
+app.get('/downloadExcel', (req, res) => {
+  res.download('./uploads/0vMvOJF-tNh40vD5BD7MuvSD.pdf');
+})
+
+app.get('/downloadPdf', (req, res) => {
+
+})

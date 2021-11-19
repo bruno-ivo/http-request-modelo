@@ -34,7 +34,7 @@ export class UploadFileComponent implements OnInit {
 
   onUpload() {
     if(this.files && this.files.size > 0){
-      this.service.upload(this.files, '/api/upload')
+      this.service.upload(this.files, 'api/upload')
       .subscribe( (event: HttpEvent<Object>) => {
         //HttpEventType
         console.log(event);
@@ -50,4 +50,27 @@ export class UploadFileComponent implements OnInit {
       });
     }
   }
+
+  onDownloadExcel(){
+    this.service.download('/api/downloadExcel')
+    .subscribe((res: any) => {
+      const file = new Blob([res], {
+        type: res.type
+      });
+
+
+      const blob = window.URL.createObjectURL(file);
+      const link = document.createElement('a');
+      link.href = blob;
+      link.download = '0vMvOJF-tNh40vD5BD7MuvSD.pdf';
+      link.click();
+      window.URL.revokeObjectURL(blob);
+      link.remove();
+    });
+  }
+
+  onDownloadPdf(){
+
+  }
+
 }

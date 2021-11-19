@@ -18,4 +18,11 @@ export class UploadFileService {
       reportProgress: true
     })
   }
+
+  download(url: string){
+    return this.http.get(url, {
+      responseType: 'blob' as 'json',
+
+    });
+  }
 }

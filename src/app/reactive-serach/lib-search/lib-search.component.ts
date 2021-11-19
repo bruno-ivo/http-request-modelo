@@ -2,7 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Observable, pipe } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { debounceTime, distinctUntilChanged, filter, map, tap, switchMap } from 'rxjs/operators';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  map,
+  tap,
+  switchMap,
+} from 'rxjs/operators';
 
 @Component({
   selector: 'app-lib-search',
@@ -13,27 +20,28 @@ export class LibSearchComponent implements OnInit {
   queryField = new FormControl();
   readonly SEARCH_URL = 'https://api.cdnjs.com/libraries';
   results$?: Observable<any>;
-  total?: number ;
+  total?: number;
   readonly FIELDS = 'name,description,version,homepage';
 
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.results$ = this.queryField.valueChanges
-    .pipe(
-      map(value => value.trim()),
-      filter(value => value.lenght > 1),
+    this.results$ = this.queryField.valueChanges.pipe(
+      map((value) => value.trim()),
+      filter((value) => value.lenght > 1),
       debounceTime(200),
       distinctUntilChanged(),
       //tap(value => console.log(value)),
-      switchMap(value => this.http.get(this.SEARCH_URL, {
-        params: {
-          search: value,
-          fields: this.FIELDS
-        }
-      })),
-      tap((res: any) => this.total = res.total),
-      map((res:any) => res.result)
+      switchMap((value) =>
+        this.http.get(this.SEARCH_URL, {
+          params: {
+            search: value,
+            fields: this.FIELDS,
+          },
+        })
+      ),
+      tap((res: any) => (this.total = res.total)),
+      map((res: any) => res.result)
     );
   }
 
@@ -41,10 +49,9 @@ export class LibSearchComponent implements OnInit {
     const fields = 'name,description,version,homepage';
     let value = this.queryField.value;
     if (value && (value = value.trim()) !== '') {
-
-      const params_ ={
+      const params_ = {
         search: value,
-        fields: fields
+        fields: fields,
       };
 
       let params = new HttpParams();
@@ -52,12 +59,10 @@ export class LibSearchComponent implements OnInit {
       params = params.set('fields', fields);
 
       console.log(this.queryField.value);
-      this.results$ = this.http
-        .get(this.SEARCH_URL, { params })
-        .pipe(
-          tap((res: any) => (this.total = res.total)),
-          map((res: any) => res.result)
-        );
+      this.results$ = this.http.get(this.SEARCH_URL, { params }).pipe(
+        tap((res: any) => (this.total = res.total)),
+        map((res: any) => res.result)
+      );
     }
   }
 }
